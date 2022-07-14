@@ -1,9 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { Provider as PaperProvider } from "react-native-paper";
+import { NativeBaseProvider, extendTheme } from "native-base";
 
-import { DirectoryProvider } from "./libs/DirectoryContext";
+import { DirectoryProvider } from "./libs/directoryContext";
 import Navbar from "./components/Navbar";
 
 import MainScreen from "./screens/MainScreen";
@@ -11,12 +11,18 @@ import FolderScreen from "./screens/FolderScreen";
 
 const Stack = createNativeStackNavigator();
 
+const theme = extendTheme({
+  config: {
+    initialColorMode: "dark",
+  },
+});
+
 export default function App() {
   return (
     <DirectoryProvider>
-      <SafeAreaProvider>
-        <PaperProvider>
-          <NavigationContainer>
+      <SafeAreaProvider style={{ backgroundColor: "#27272a" }}>
+        <NativeBaseProvider theme={theme}>
+          <NavigationContainer theme={theme}>
             <Stack.Navigator screenOptions={{ header: (props) => <Navbar {...props} /> }}>
               <Stack.Screen
                 name="Main"
@@ -29,7 +35,7 @@ export default function App() {
               <Stack.Screen name="Folder" component={FolderScreen} />
             </Stack.Navigator>
           </NavigationContainer>
-        </PaperProvider>
+        </NativeBaseProvider>
       </SafeAreaProvider>
     </DirectoryProvider>
   );

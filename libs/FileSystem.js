@@ -4,23 +4,33 @@ const mainDir = FileSystem.documentDirectory;
 
 const getRootPath = async () => {
   const root = FileSystem.documentDirectory;
-  //   console.log(root);
   return root;
 };
 
-const getCurrentDir = async () => {
-  const root = await getRootPath();
-  const dir = await FileSystem.readDirectoryAsync(root);
-  //   console.log(dir);
+const getInfo = async (item) => {
+  const info = await FileSystem.getInfoAsync(item);
+  return info;
+};
+
+const getCurrentDir = async (path) => {
+  const dir = await FileSystem.readDirectoryAsync(path);
   return dir;
 };
 
 const createDir = async (path) => {
-  const dir = await FileSystem.getInfoAsync(path);
+  const dirInfo = await FileSystem.getInfoAsync(path);
   if (!dirInfo.exists) {
     console.log("Directory doesn't exist, creating...");
     await FileSystem.makeDirectoryAsync(path, { intermediates: true });
   }
 };
 
-export { getRootPath, getCurrentDir, createDir };
+const createFile = async (path, content) => {
+  await FileSystem.writeAsStringAsync(path, content);
+};
+
+const deleteItem = async (path) => {
+  await FileSystem.deleteAsync(path);
+};
+
+export { getRootPath, getInfo, getCurrentDir, createDir, createFile, deleteItem };
