@@ -2,7 +2,10 @@ import { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { Camera, CameraType } from "expo-camera";
 
+import { usePath } from "../libs/directoryContext";
+
 export default function CameraView() {
+  const path = usePath();
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(CameraType.back);
 
@@ -30,6 +33,15 @@ export default function CameraView() {
             }}
           >
             <Text style={styles.text}> Flip </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              path.setShowCamera((prev) => !prev);
+            }}
+          >
+            <Text style={styles.text}> Close </Text>
           </TouchableOpacity>
         </View>
       </Camera>

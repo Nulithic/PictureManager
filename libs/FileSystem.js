@@ -25,12 +25,16 @@ const createDir = async (path) => {
   }
 };
 
-const createFile = async (path, content) => {
-  await FileSystem.writeAsStringAsync(path, content);
+const renameItem = async (path, newName) => {
+  try {
+    await FileSystem.moveAsync({ from: path, to: newName });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const deleteItem = async (path) => {
   await FileSystem.deleteAsync(path);
 };
 
-export { getRootPath, getInfo, getCurrentDir, createDir, createFile, deleteItem };
+export { getRootPath, getInfo, getCurrentDir, createDir, renameItem, deleteItem };
