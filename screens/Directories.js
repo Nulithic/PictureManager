@@ -3,6 +3,7 @@ import { VirtualizedList, StyleSheet, StatusBar, TouchableOpacity } from "react-
 import { Icon, HStack, Box, Menu, Button, Input, AlertDialog, Divider, Text } from "native-base";
 import SafeAreaView from "react-native-safe-area-view";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 import CameraView from "../components/CameraView";
 
@@ -15,8 +16,9 @@ const getItem = (data, index) => ({
   data: data[index],
 });
 
-export default function MainScreen({ navigation }) {
+export default function Directories({ navigation }) {
   const path = usePath();
+  const isFocused = useIsFocused();
 
   const toggleSelect = (item) => {
     path.setCurrentDirList(
@@ -33,7 +35,10 @@ export default function MainScreen({ navigation }) {
     if (path.selectionMode) {
       toggleSelect(item);
     } else {
-      console.log(JSON.stringify(item));
+      if (item.type === "directory") {
+        path.setPathList((arr) => [...arr, item.name]);
+        navigation.push("Directories");
+      }
     }
   };
 
@@ -44,11 +49,10 @@ export default function MainScreen({ navigation }) {
   };
 
   useEffect(() => {
-    const getData = async () => {
+    (async () => {
       await path.getCurrentDirList();
-    };
-    getData();
-  }, []);
+    })();
+  }, [isFocused]);
 
   const RenderItem = ({ data }) => (
     <TouchableOpacity onPress={() => onPress(data)} onLongPress={() => onLongPress(data)}>

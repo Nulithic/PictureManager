@@ -23,6 +23,13 @@ export default function Navbar({ options, navigation, back }) {
     );
   };
 
+  const handleBackNav = () => {
+    let list = path.pathList;
+    list.pop();
+    path.setPathList(list);
+    navigation.pop();
+  };
+
   const handleDialog = (state) => {
     if (state !== "") setDialogState(state);
     setInputText("");
@@ -81,7 +88,9 @@ export default function Navbar({ options, navigation, back }) {
   };
 
   const handleSyncServer = async () => {
+    console.log(path.getCurrentPath());
     console.log(path.currentDirList);
+    console.log(path.pathList);
   };
 
   const dialogHeader = () => {
@@ -110,12 +119,12 @@ export default function Navbar({ options, navigation, back }) {
 
   return (
     <>
-      <StatusBar barStyle="light-content" />
-      <Box safeAreaTop />
+      <StatusBar bg="#27272a" barStyle="light-content" />
+      <Box bg="#27272a" safeAreaTop />
 
       {path.showCamera ? null : (
         <>
-          <HStack px="1" py="2" justifyContent="space-between" alignItems="center" w="100%">
+          <HStack bg="#27272a" px="1" py="2" justifyContent="space-between" alignItems="center" w="100%">
             {path.selectionMode ? (
               <>
                 <HStack alignItems="center">
@@ -140,7 +149,7 @@ export default function Navbar({ options, navigation, back }) {
             ) : (
               <>
                 <HStack alignItems="center">
-                  {back ? <IconButton icon={<Icon as={MaterialIcons} name="arrow-back-ios" color="white" />} onPress={navigation.goBack} /> : null}
+                  {back ? <IconButton icon={<Icon as={MaterialIcons} name="arrow-back-ios" color="white" />} onPress={handleBackNav} /> : null}
                   <Text color="white" fontSize="20" fontWeight="bold" pl="3">
                     {options.title}
                   </Text>

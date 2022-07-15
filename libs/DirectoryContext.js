@@ -15,7 +15,8 @@ export const DirectoryProvider = ({ children }) => {
   const [showCamera, setShowCamera] = useState(false);
 
   const getCurrentPath = () => {
-    return root + pathList.join("/");
+    if (pathList.length === 0) return root;
+    else return root + pathList.join("/") + "/";
   };
 
   const handleGetRootPath = async () => {
