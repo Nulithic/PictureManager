@@ -16,13 +16,13 @@ const getItem = (data, index) => ({
   data: data[index],
 });
 
-export default function Directories({ navigation }) {
+export default function CameraScreen({ navigation }) {
   const path = usePath();
   const isFocused = useIsFocused();
 
   const toggleSelect = (item) => {
-    path.setCurrentDirList(
-      path.currentDirList.map((i) => {
+    path.setScreenTwoDirList(
+      path.screenTwoDirList.map((i) => {
         if (item === i) {
           i.selected = !i.selected;
         }
@@ -37,7 +37,7 @@ export default function Directories({ navigation }) {
     } else {
       if (item.type === "directory") {
         path.setPathList((arr) => [...arr, item.name]);
-        navigation.push("Directories");
+        navigation.push("ScreenOne");
       }
     }
   };
@@ -50,7 +50,7 @@ export default function Directories({ navigation }) {
 
   useEffect(() => {
     (async () => {
-      await path.getCurrentDirList();
+      // await path.getScreenTwoDirList();
     })();
   }, [isFocused]);
 
@@ -79,7 +79,7 @@ export default function Directories({ navigation }) {
         <Box backgroundColor="gray.900">
           <VirtualizedList
             style={{ height: "100%" }}
-            data={path.currentDirList.sort((a, b) => compare(a.name, b.name))}
+            data={path.screenTwoDirList.sort((a, b) => compare(a.name, b.name))}
             initialNumToRender={10}
             renderItem={({ item }) => <RenderItem data={item.data} />}
             keyExtractor={(item) => item.key}

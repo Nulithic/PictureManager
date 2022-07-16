@@ -1,9 +1,9 @@
-import { useState, useEffect, createRef, forwardRef } from "react";
-import { VirtualizedList, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
+import { useState, useEffect, useCallback, createRef, forwardRef } from "react";
+import { VirtualizedList, StyleSheet, StatusBar, TouchableOpacity, InteractionManager } from "react-native";
 import { Icon, HStack, Box, Menu, Button, Input, AlertDialog, Divider, Text } from "native-base";
 import SafeAreaView from "react-native-safe-area-view";
 import { MaterialIcons } from "@expo/vector-icons";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useFocusEffect } from "@react-navigation/native";
 
 import CameraView from "../components/CameraView";
 
@@ -16,13 +16,13 @@ const getItem = (data, index) => ({
   data: data[index],
 });
 
-export default function ScreenTwo({ navigation }) {
+export default function Directories({ navigation }) {
   const path = usePath();
   const isFocused = useIsFocused();
 
   const toggleSelect = (item) => {
-    path.setScreenTwoDirList(
-      path.screenTwoDirList.map((i) => {
+    path.setCurrentDirList(
+      path.currentDirList.map((i) => {
         if (item === i) {
           i.selected = !i.selected;
         }
@@ -37,7 +37,7 @@ export default function ScreenTwo({ navigation }) {
     } else {
       if (item.type === "directory") {
         path.setPathList((arr) => [...arr, item.name]);
-        navigation.push("ScreenOne");
+        navigation.push("Directories");
       }
     }
   };
@@ -48,11 +48,21 @@ export default function ScreenTwo({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    (async () => {
-      // await path.getScreenTwoDirList();
-    })();
-  }, [isFocused]);
+  // useEffect(() => {
+  //   (async () => {
+  //     await path.getCurrentDirList();
+  //   })();
+  // }, [isFocused]);
+
+  useFocusEffect(
+    useCallback(() => {
+      const task = InteractionManager.runAfterInteractions(async () => {
+        await path.getCurrentDirList();
+      });
+
+      return () => task.cancel();
+    }, [])
+  );
 
   const RenderItem = ({ data }) => (
     <TouchableOpacity onPress={() => onPress(data)} onLongPress={() => onLongPress(data)}>
@@ -79,7 +89,7 @@ export default function ScreenTwo({ navigation }) {
         <Box backgroundColor="gray.900">
           <VirtualizedList
             style={{ height: "100%" }}
-            data={path.screenTwoDirList.sort((a, b) => compare(a.name, b.name))}
+            data={path.currentDirList.sort((a, b) => compare(a.name, b.name))}
             initialNumToRender={10}
             renderItem={({ item }) => <RenderItem data={item.data} />}
             keyExtractor={(item) => item.key}

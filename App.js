@@ -6,8 +6,8 @@ import { NativeBaseProvider, extendTheme } from "native-base";
 import { DirectoryProvider } from "./libs/directoryContext";
 import Navbar from "./components/Navbar";
 
-import Directories from "./screens/Directories";
-import ScreenTwo from "./screens/ScreenTwo";
+import DirectoryScreen from "./screens/DirectoryScreen";
+import CameraScreen from "./screens/CameraScreen";
 
 const Stack = createStackNavigator();
 
@@ -20,7 +20,7 @@ const theme = extendTheme({
 const config = {
   animation: "timing",
   config: {
-    duration: 500,
+    duration: 0,
   },
 };
 
@@ -33,20 +33,17 @@ export default function App() {
             <Stack.Navigator screenOptions={{ header: (props) => <Navbar {...props} /> }}>
               <Stack.Screen
                 name="Directories"
-                component={Directories}
+                component={DirectoryScreen}
                 options={(props) => ({
                   title: props.route.name,
                   subtitle: "cool",
                   gestureEnabled: false,
-                  transitionSpec: {
-                    open: config,
-                    close: config,
-                  },
+                  animationEnabled: false,
                 })}
               />
               <Stack.Screen
                 name="ScreenTwo"
-                component={ScreenTwo}
+                component={CameraScreen}
                 options={(props) => ({
                   title: props.route.name,
                   subtitle: "cool",
