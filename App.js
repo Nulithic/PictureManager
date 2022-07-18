@@ -35,8 +35,6 @@ export default function App() {
                 name="Directories"
                 component={DirectoryScreen}
                 options={(props) => ({
-                  title: props.route.name,
-                  subtitle: "cool",
                   gestureEnabled: false,
                   animationEnabled: false,
                 })}
@@ -45,8 +43,6 @@ export default function App() {
                 name="ScreenTwo"
                 component={CameraScreen}
                 options={(props) => ({
-                  title: props.route.name,
-                  subtitle: "cool",
                   gestureEnabled: false,
                   transitionSpec: {
                     open: config,

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, createRef, forwardRef } from "react";
-import { VirtualizedList, StyleSheet, StatusBar, TouchableOpacity, InteractionManager } from "react-native";
+import { FlatList, VirtualizedList, StyleSheet, StatusBar, TouchableOpacity, InteractionManager } from "react-native";
 import { Icon, HStack, Box, Menu, Button, Input, AlertDialog, Divider, Text } from "native-base";
 import SafeAreaView from "react-native-safe-area-view";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -18,6 +18,7 @@ const getItem = (data, index) => ({
 
 export default function Directories({ navigation }) {
   const path = usePath();
+  const dirList = path.currentDirList.sort((a, b) => compare(a.name, b.name));
   const isFocused = useIsFocused();
 
   const toggleSelect = (item) => {
@@ -36,6 +37,7 @@ export default function Directories({ navigation }) {
       toggleSelect(item);
     } else {
       if (item.type === "directory") {
+        path.setCurrentDirList([]);
         path.setPathList((arr) => [...arr, item.name]);
         navigation.push("Directories");
       }
@@ -83,21 +85,15 @@ export default function Directories({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      {path.showCamera ? (
-        <CameraView />
-      ) : (
-        <Box backgroundColor="gray.900">
-          <VirtualizedList
-            style={{ height: "100%" }}
-            data={path.currentDirList.sort((a, b) => compare(a.name, b.name))}
-            initialNumToRender={10}
-            renderItem={({ item }) => <RenderItem data={item.data} />}
-            keyExtractor={(item) => item.key}
-            getItemCount={(data) => data.length}
-            getItem={getItem}
-          />
-        </Box>
-      )}
+      <VirtualizedList
+        style={{ height: "100%" }}
+        data={dirList}
+        initialNumToRender={10}
+        renderItem={({ item }) => <RenderItem data={item.data} />}
+        keyExtractor={(item) => item.key}
+        getItemCount={(data) => data.length}
+        getItem={getItem}
+      />
     </SafeAreaView>
   );
 }

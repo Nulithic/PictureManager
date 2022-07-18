@@ -29,12 +29,12 @@ export const DirectoryProvider = ({ children }) => {
     const list = await getCurrentDir(curr);
     let newList = [];
 
-    for (let item of list) {
+    for (let [index, item] of list.entries()) {
       const info = await getInfo(curr + item);
       if (info.isDirectory) {
-        newList.push({ name: item, type: "directory" });
+        newList.push({ id: index, name: item, type: "directory" });
       } else {
-        newList.push({ name: item, type: "file" });
+        newList.push({ id: index, name: item, type: "file" });
       }
     }
     setCurrentDirList(newList);
