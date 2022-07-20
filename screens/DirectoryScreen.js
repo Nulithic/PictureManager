@@ -5,8 +5,6 @@ import SafeAreaView from "react-native-safe-area-view";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused, useFocusEffect } from "@react-navigation/native";
 
-import CameraView from "../components/CameraView";
-
 import { usePath } from "../libs/directoryContext";
 
 const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
@@ -16,7 +14,7 @@ const getItem = (data, index) => ({
   data: data[index],
 });
 
-export default function Directories({ navigation }) {
+export default function DirectoryScreen({ navigation }) {
   const path = usePath();
   const dirList = path.currentDirList.sort((a, b) => compare(a.name, b.name));
   const isFocused = useIsFocused();

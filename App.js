@@ -40,14 +40,11 @@ export default function App() {
                 })}
               />
               <Stack.Screen
-                name="ScreenTwo"
+                name="Camera"
                 component={CameraScreen}
                 options={(props) => ({
                   gestureEnabled: false,
-                  transitionSpec: {
-                    open: config,
-                    close: config,
-                  },
+                  animationEnabled: false,
                 })}
               />
             </Stack.Navigator>

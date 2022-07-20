@@ -1,100 +1,91 @@
-import { useState, useEffect, createRef, forwardRef } from "react";
-import { VirtualizedList, StyleSheet, StatusBar, TouchableOpacity } from "react-native";
-import { Icon, HStack, Box, Menu, Button, Input, AlertDialog, Divider, Text } from "native-base";
-import SafeAreaView from "react-native-safe-area-view";
-import { MaterialIcons } from "@expo/vector-icons";
-import { useIsFocused } from "@react-navigation/native";
-
-import CameraView from "../components/CameraView";
+import { useState, useEffect } from "react";
+import { StyleSheet, Text, View, TouchableOpacity, Platform, Linking } from "react-native";
+import { HStack, IconButton, Icon, Slider, Box, Center } from "native-base";
+import { Camera, CameraPermissionStatus } from "react-native-vision-camera";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { PinchGestureHandler } from "react-native-gesture-handler";
 
 import { usePath } from "../libs/directoryContext";
 
-const { compare } = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
-
-const getItem = (data, index) => ({
-  key: index,
-  data: data[index],
-});
-
 export default function CameraScreen({ navigation }) {
   const path = usePath();
-  const isFocused = useIsFocused();
 
-  const toggleSelect = (item) => {
-    path.setScreenTwoDirList(
-      path.screenTwoDirList.map((i) => {
-        if (item === i) {
-          i.selected = !i.selected;
-        }
-        return i;
-      })
-    );
-  };
+  const devices = useCameraDevices();
+  const device = devices.back;
 
-  const onPress = (item) => {
-    if (path.selectionMode) {
-      toggleSelect(item);
-    } else {
-      if (item.type === "directory") {
-        path.setPathList((arr) => [...arr, item.name]);
-        navigation.push("ScreenOne");
-      }
-    }
-  };
+  const [cameraPermissionStatus, setCameraPermissionStatus] = useState();
+  const [type, setType] = useState(CameraType.back);
+  const [zoom, setZoom] = useState(0);
 
-  const onLongPress = (item) => {
-    if (path.selectionMode === false) {
-      toggleSelect(item);
-    }
+  const getCameraDevices = async () => {
+    const devices = await Camera.getAvailableCameraDevices();
+    console.log(devices);
   };
 
   useEffect(() => {
     (async () => {
-      // await path.getScreenTwoDirList();
-    })();
-  }, [isFocused]);
+      console.log("Requesting camera permission...");
+      const permission = await Camera.requestCameraPermission();
+      console.log(`Camera permission status: ${permission}`);
 
-  const RenderItem = ({ data }) => (
-    <TouchableOpacity onPress={() => onPress(data)} onLongPress={() => onLongPress(data)}>
-      <Box shadow="2" borderColor="coolGray.600" backgroundColor="gray.700" borderWidth="1" rounded="lg" mt="4" mx="2">
-        <HStack space="4" alignItems="center" p="4">
-          {data.selected ? (
-            <Icon as={MaterialIcons} name="check-circle" size="xl" color="success.400" />
-          ) : data.type === "directory" ? (
-            <Icon as={MaterialIcons} name="folder" size="xl" />
-          ) : (
-            <Icon as={MaterialIcons} name="image" size="xl" />
-          )}
-          <Text fontSize="lg">{data.name}</Text>
-        </HStack>
-      </Box>
-    </TouchableOpacity>
-  );
+      if (permission === "denied") await Linking.openSettings();
+      setCameraPermissionStatus(permission);
+    })();
+  }, []);
+
+  if (device === null) {
+    return <View />;
+  }
 
   return (
-    <SafeAreaView style={styles.container}>
-      {path.showCamera ? (
-        <CameraView />
-      ) : (
-        <Box backgroundColor="gray.900">
-          <VirtualizedList
-            style={{ height: "100%" }}
-            data={path.screenTwoDirList.sort((a, b) => compare(a.name, b.name))}
-            initialNumToRender={10}
-            renderItem={({ item }) => <RenderItem data={item.data} />}
-            keyExtractor={(item) => item.key}
-            getItemCount={(data) => data.length}
-            getItem={getItem}
-          />
-        </Box>
-      )}
-    </SafeAreaView>
+    <Camera style={StyleSheet.absoluteFill} device={device} isActive={true} />
+    // <PinchGestureHandler onGestureEvent={onPinchGestureEvent}>
+    //   <View style={styles.container}>
+    //     <Camera style={styles.camera} type={type} zoom={zoom}>
+    //       <HStack px="1" py="2" mt="5" justifyContent="flex-start" alignItems="center">
+    //         <IconButton
+    //           icon={<Icon as={MaterialIcons} name="arrow-back-ios" color="white" />}
+    //           onPress={() => {
+    //             path.setCameraMode((prev) => !prev);
+    //             navigation.pop();
+    //           }}
+    //         />
+    //       </HStack>
+    //     </Camera>
+    //     <Box alignItems="center" w="100%" h="20%" px="1" py="2">
+    //       <Slider maxW="300" defaultValue={0} minValue={0} maxValue={0.1} value={zoom} step={0.001} onChange={(value) => setZoom(value)}>
+    //         <Slider.Track>
+    //           <Slider.FilledTrack />
+    //         </Slider.Track>
+    //         <Slider.Thumb />
+    //       </Slider>
+    //       <HStack justifyContent="space-between" alignItems="center" w="100%" mt="5">
+    //         <IconButton icon={<Icon as={MaterialCommunityIcons} name="camera-flip-outline" color="white" size="xl" />} onPress={handleFlipCamera} />
+    //         <IconButton icon={<Icon as={MaterialCommunityIcons} name="circle-outline" color="white" size="6xl" />} onPress={handleFlipCamera} />
+    //         <Box p="10px">
+    //           <Icon as={MaterialCommunityIcons} name="camera-flip-outline" color="#27272a" size="xl" />
+    //         </Box>
+    //       </HStack>
+    //     </Box>
+    //   </View>
+    // </PinchGestureHandler>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: StatusBar.currentHeight,
+  },
+  camera: {
+    flex: 1,
+  },
+  button: {
+    flex: 0.1,
+    alignSelf: "flex-end",
+    alignItems: "center",
+  },
+  text: {
+    fontSize: 18,
+    color: "white",
   },
 });

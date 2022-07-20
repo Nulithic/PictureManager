@@ -12,7 +12,7 @@ export const DirectoryProvider = ({ children }) => {
   const [pathList, setPathList] = useState([]);
   const [currentDirList, setCurrentDirList] = useState([]);
   const [selectionMode, setSelectionMode] = useState(null);
-  const [showCamera, setShowCamera] = useState(false);
+  const [cameraMode, setCameraMode] = useState(false);
 
   const getCurrentPath = () => {
     if (pathList.length === 0) return root;
@@ -54,7 +54,7 @@ export const DirectoryProvider = ({ children }) => {
 
   return (
     <DirectoryContext.Provider
-      value={{ root, pathList, currentDirList, selectionMode, showCamera, setPathList, setCurrentDirList, getCurrentPath, getCurrentDirList, setShowCamera }}
+      value={{ root, pathList, currentDirList, selectionMode, cameraMode, setPathList, setCurrentDirList, getCurrentPath, getCurrentDirList, setCameraMode }}
     >
       {children}
     </DirectoryContext.Provider>

@@ -41,7 +41,8 @@ export default function Navbar({ route, navigation, back }) {
   };
 
   const handleCamera = async () => {
-    path.setShowCamera((prev) => !prev);
+    path.setCameraMode((prev) => !prev);
+    navigation.push("Camera");
 
     // const dir = path.getCurrentPath();
     // await createFile(dir + folderName, "Test 123");
@@ -127,46 +128,58 @@ export default function Navbar({ route, navigation, back }) {
 
   return (
     <>
-      <StatusBar bg="#27272a" barStyle="light-content" />
-      <Box bg="#27272a" safeAreaTop />
-      <HStack bg="#27272a" px="1" py="2" justifyContent="space-between" alignItems="center">
-        {path.selectionMode ? (
-          <>
-            <HStack alignItems="center">
-              <IconButton icon={<Icon as={MaterialIcons} name="arrow-back-ios" color="white" />} onPress={clearSelection} />
-              <Text color="white" fontSize="20" fontWeight="bold" pl="3">
-                {path.currentDirList.filter((i) => i.selected).length} Selected
-              </Text>
-            </HStack>
-            <HStack>
-              {selections.length === 1 ? (
-                <IconButton
-                  icon={<Icon as={MaterialIcons} name="drive-file-rename-outline" color="white" size="lg" />}
-                  onPress={() => handleDialog("rename")}
-                />
-              ) : null}
-              <IconButton icon={<Icon as={MaterialCommunityIcons} name="delete-outline" color="white" size="lg" />} onPress={() => handleDialog("delete")} />
-            </HStack>
-          </>
-        ) : (
-          <>
-            <HStack alignItems="center">
-              {back ? <IconButton icon={<Icon as={MaterialIcons} name="arrow-back-ios" color="white" />} onPress={handleBackNav} /> : null}
-              <Text adjustsFontSizeToFit color="white" fontSize="20" fontWeight="bold" pl="3">
-                {titleName()}
-              </Text>
-            </HStack>
-            <HStack space="2">
-              <IconButton icon={<Icon as={MaterialCommunityIcons} name="camera-outline" color="white" size="xl" />} onPress={handleCamera} />
-              <IconButton
-                icon={<Icon as={MaterialCommunityIcons} name="folder-plus-outline" color="white" size="xl" />}
-                onPress={() => handleDialog("newFolder")}
-              />
-              <IconButton icon={<Icon as={MaterialCommunityIcons} name="folder-sync-outline" color="white" size="xl" />} onPress={handleSyncServer} />
-            </HStack>
-          </>
-        )}
-      </HStack>
+      {path.cameraMode ? (
+        <>
+          <StatusBar hidden />
+          {/* <Box  safeAreaTop /> */}
+        </>
+      ) : (
+        <>
+          <StatusBar barStyle="light-content" />
+          <Box safeAreaTop />
+          <HStack px="1" py="2" justifyContent="space-between" alignItems="center">
+            {path.selectionMode ? (
+              <>
+                <HStack alignItems="center">
+                  <IconButton icon={<Icon as={MaterialIcons} name="arrow-back-ios" color="white" />} onPress={clearSelection} />
+                  <Text color="white" fontSize="20" fontWeight="bold" pl="3">
+                    {path.currentDirList.filter((i) => i.selected).length} Selected
+                  </Text>
+                </HStack>
+                <HStack>
+                  {selections.length === 1 ? (
+                    <IconButton
+                      icon={<Icon as={MaterialIcons} name="drive-file-rename-outline" color="white" size="lg" />}
+                      onPress={() => handleDialog("rename")}
+                    />
+                  ) : null}
+                  <IconButton
+                    icon={<Icon as={MaterialCommunityIcons} name="delete-outline" color="white" size="lg" />}
+                    onPress={() => handleDialog("delete")}
+                  />
+                </HStack>
+              </>
+            ) : (
+              <>
+                <HStack alignItems="center">
+                  {back ? <IconButton icon={<Icon as={MaterialIcons} name="arrow-back-ios" color="white" />} onPress={handleBackNav} /> : null}
+                  <Text adjustsFontSizeToFit color="white" fontSize="20" fontWeight="bold" pl="3">
+                    {titleName()}
+                  </Text>
+                </HStack>
+                <HStack space="2">
+                  <IconButton icon={<Icon as={MaterialCommunityIcons} name="camera-outline" color="white" size="xl" />} onPress={handleCamera} />
+                  <IconButton
+                    icon={<Icon as={MaterialCommunityIcons} name="folder-plus-outline" color="white" size="xl" />}
+                    onPress={() => handleDialog("newFolder")}
+                  />
+                  <IconButton icon={<Icon as={MaterialCommunityIcons} name="folder-sync-outline" color="white" size="xl" />} onPress={handleSyncServer} />
+                </HStack>
+              </>
+            )}
+          </HStack>
+        </>
+      )}
 
       <Center>
         <Modal isOpen={visible} avoidKeyboard onClose={handleDialog}>
